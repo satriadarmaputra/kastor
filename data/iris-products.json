@@ -1,6 +1,6 @@
 [
   {
-    "name": "Retrofit Downlight — Pinhole",
+    "name": "Pinhole — Reflector Black",
     "series": "Iris",
     "subcategory": "Retrofit Downlight",
     "slug": "iris-retrofit-downlight-pinhole",
@@ -18,6 +18,27 @@
       "IP Rating": "IP20",
       "Trim Finishing": "White",
       "Reflector Finishing": "Black"
+    }
+  },
+  {
+    "name": "Pinhole — Reflector White",
+    "series": "Iris",
+    "subcategory": "Retrofit Downlight",
+    "slug": "iris-retrofit-downlight-pinhole-white",
+    "image": "assets/iris-pinhole-white.png",
+    "imageNote": "Contoh varian White dengan gambar hasil edit. Spesifikasi lainnya mengikuti varian Black untuk simulasi; belum dikonfirmasi sebagai spesifikasi resmi varian White.",
+    "specs": {
+      "Brand": "Kastor",
+      "Product": "Retrofit Downlight",
+      "Type": "Pinhole",
+      "Voltage": "AC 220–240 V",
+      "CCT": "3000 K",
+      "Beam Angle": "24°",
+      "Product Size": "D83 × H57 mm",
+      "Cutout": "D75 mm",
+      "IP Rating": "IP20",
+      "Trim Finishing": "White",
+      "Reflector Finishing": "White"
     }
   }
 ]

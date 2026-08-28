@@ -46,10 +46,11 @@ nodes['#dimmer'].value='0';nodes['#dimmer'].handlers.input();assert.equal(nodes[
 nodes['#search'].value='magnetic';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.ok(nodes['#empty'].hidden===false);
 nodes['#search'].value='';nodes['#series'].value='';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,products.length);
-nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.equal(nodes['#subcategory-menu'].hidden,false);subButtons[1].handlers.click();assert.equal(cards.filter(c=>!c.hidden).length,1);assert.equal(subButtons[1]['aria-pressed'],'true');assert.equal(nodes['#type-menu'].hidden,false);typeButtons[1].handlers.click();assert.equal(typeButtons[1]['aria-pressed'],'true');assert.equal(cards.filter(c=>!c.hidden).length,1);
+nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.equal(nodes['#subcategory-menu'].hidden,false);subButtons[1].handlers.click();assert.equal(cards.filter(c=>!c.hidden).length,2);assert.equal(subButtons[1]['aria-pressed'],'true');assert.equal(nodes['#type-menu'].hidden,false);typeButtons[1].handlers.click();assert.equal(typeButtons[1]['aria-pressed'],'true');assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#series'].value='Terra';nodes['#series'].handlers.change();assert.equal(nodes['#subcategory-menu'].hidden,true);assert.equal(nodes['#type-menu'].hidden,true);assert.equal(typeButtons[1]['aria-pressed'],'false');assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#contact-open'].handlers.click();assert.equal(nodes['#contact-dialog'].open,true);nodes['#contact-close'].handlers.click();assert.equal(nodes['#contact-dialog'].open,false);
 console.log('Passed: all pages, customer privacy checks, QR decoding, ZIP, redirects, filters and contact handlers.');
+
 
 
 
