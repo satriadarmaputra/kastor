@@ -1,5 +1,7 @@
 const search=document.querySelector('#search');
 const series=document.querySelector('#series');
+const dimmer=document.querySelector('#dimmer');
+if(dimmer){const updateLight=()=>{const value=Number(dimmer.value);document.querySelector('.hero').style.setProperty('--light-level',String(value/100));document.querySelector('#dimmer-value').textContent=`${value}%`;dimmer.setAttribute('aria-valuetext',`${value} persen`);};dimmer.addEventListener('input',updateLight);updateLight();}
 const contactDialog=document.querySelector('#contact-dialog');
 if(contactDialog){document.querySelector('#contact-open').addEventListener('click',()=>contactDialog.showModal());document.querySelector('#contact-close').addEventListener('click',()=>contactDialog.close());}
 if(search&&series){

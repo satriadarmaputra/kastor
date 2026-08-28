@@ -5,6 +5,9 @@ const root=path.resolve(__dirname,'../dist');
 let pages=0;
 function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(p.endsWith('.html')){pages++;const s=fs.readFileSync(p,'utf8');for(const m of s.matchAll(/(?:href|src)="(\/[^"#]*)"/g)){assert.ok(fs.existsSync(path.join(root,m[1])),m[1]);}assert.ok(s.includes('/site.css'));}}}
 walk(root);assert.equal(pages,14);
+const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
+assert.equal((home.match(/<details>/g)||[]).length,products.length);
+for(const p of products){assert.ok(home.includes(`download="${p.slug}.png"`));assert.ok(home.includes(`alt="QR ${p.name}"`));}
 for(const p of products){
  const html=fs.readFileSync(path.join(root,route(p),'index.html'),'utf8');
  assert.ok(!/KST-DEMO-|Product ID|SKU|qr\/|data-product|href="\/"/.test(html),'Customer page must not contain internal IDs, QR links or catalogue navigation');
@@ -24,8 +27,11 @@ for(const p of products.filter(p=>p.demo))assert.ok(redirects.includes(`/demo/p/
 // Exercise the actual browser filter and contact handlers against small DOM fixtures.
 const vm=require('node:vm');const nodes={};
 for(const id of ['search','series','count','empty','contact-open','contact-close','contact-dialog'])nodes['#'+id]={value:'',handlers:{},addEventListener(type,cb){this.handlers[type]=cb;},showModal(){this.open=true;},close(){this.open=false;}};
+nodes['#dimmer']={value:'70',handlers:{},addEventListener(type,cb){this.handlers[type]=cb;},setAttribute(name,value){this[name]=value;}};
+nodes['#dimmer-value']={};nodes['.hero']={style:{setProperty(name,value){this[name]=value;}}};
 const cards=products.map(p=>({dataset:{search:(p.name+' '+p.specs.Type).toLowerCase(),series:p.series},hidden:false}));
 vm.runInNewContext(fs.readFileSync(path.join(root,'site.js'),'utf8'),{document:{querySelector:s=>nodes[s],querySelectorAll:()=>cards}});
+for(const value of ['0','70','100']){nodes['#dimmer'].value=value;nodes['#dimmer'].handlers.input();assert.equal(nodes['.hero'].style['--light-level'],String(Number(value)/100));assert.equal(nodes['#dimmer-value'].textContent,value+'%');}
 nodes['#search'].value='magnetic';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.ok(nodes['#empty'].hidden===false);
 nodes['#search'].value='';nodes['#series'].value='';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,11);
