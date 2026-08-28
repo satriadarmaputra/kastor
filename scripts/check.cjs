@@ -4,7 +4,7 @@ const {products,route,base}=require('./storefront.cjs');
 const root=path.resolve(__dirname,'../dist');
 let pages=0;
 function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(p.endsWith('.html')){pages++;const s=fs.readFileSync(p,'utf8');for(const m of s.matchAll(/(?:href|src)="(\/[^"#]*)"/g)){assert.ok(fs.existsSync(path.join(root,m[1])),m[1]);}assert.ok(s.includes('/site.css'));}}}
-walk(root);assert.equal(pages,14);
+walk(root);assert.equal(pages,products.length+3);
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
 assert.ok(home.includes('/experience.js'));
 assert.equal((home.match(/id="dimmer"/g)||[]).length,1);
@@ -26,7 +26,7 @@ for(const p of products){
   assert.equal(jsQR(rgba,size,size)?.data,base+route(p),'Branded QR must decode at '+size+'px');
  }
 }
-assert.equal(Object.keys(unzipSync(fs.readFileSync(path.join(root,'qr/kastor-qr.zip')))).length,11);
+assert.equal(Object.keys(unzipSync(fs.readFileSync(path.join(root,'qr/kastor-qr.zip')))).length,products.length);
 assert.ok(!fs.existsSync(path.join(root,'demo/products-demo.json')));
 const redirects=fs.readFileSync(path.join(root,'_redirects'),'utf8');
 for(const p of products.filter(p=>p.demo))assert.ok(redirects.includes(`/demo/p/${p.id} ${route(p)} 301`));
@@ -42,7 +42,8 @@ assert.equal(nodes['.hero'].style['--ambient-bg'],'rgb(248, 246, 242)');
 nodes['#dimmer'].value='0';nodes['#dimmer'].handlers.input();assert.equal(nodes['.hero'].style['--ambient-bg'],'rgb(166, 148, 128)');assert.equal(nodes['.hero'].style['--ambient-photo'],'0.65');
 nodes['#search'].value='magnetic';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.ok(nodes['#empty'].hidden===false);
-nodes['#search'].value='';nodes['#series'].value='';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,11);
+nodes['#search'].value='';nodes['#series'].value='';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,products.length);
 nodes['#contact-open'].handlers.click();assert.equal(nodes['#contact-dialog'].open,true);nodes['#contact-close'].handlers.click();assert.equal(nodes['#contact-dialog'].open,false);
-console.log('Passed: 14 pages, customer privacy checks, 22 QR decode checks, ZIP, redirects, filters and contact handlers.');
+console.log('Passed: all pages, customer privacy checks, QR decoding, ZIP, redirects, filters and contact handlers.');
+
 
