@@ -19,10 +19,13 @@ if(contactDialog){document.querySelector('#contact-open').addEventListener('clic
 if(search&&series){
  const cards=[...document.querySelectorAll('[data-product]')];
  const submenu=document.querySelector('#subcategory-menu');
- let subcategory='';
+ const typeMenu=document.querySelector('#type-menu');
+ let subcategory='',productType='';
  const subButtons=submenu?[...submenu.querySelectorAll('button')]:[];
- const filter=()=>{if(submenu)submenu.hidden=series.value!=='Iris';for(const button of subButtons)button.setAttribute('aria-pressed',String(button.dataset.subcategory===subcategory));let count=0;for(const card of cards){const match=card.dataset.search.includes(search.value.trim().toLowerCase())&&(!series.value||card.dataset.series===series.value)&&(!subcategory||card.dataset.subcategory===subcategory);card.hidden=!match;if(match)count++;}document.querySelector('#count').textContent=`${count} produk`;document.querySelector('#empty').hidden=count!==0;};
- for(const button of subButtons)button.addEventListener('click',()=>{subcategory=button.dataset.subcategory;filter();});
- search.addEventListener('input',filter);series.addEventListener('change',()=>{subcategory='';filter();});
+ const typeButtons=typeMenu?[...typeMenu.querySelectorAll('button')]:[];
+ const filter=()=>{if(submenu)submenu.hidden=series.value!=='Iris';if(typeMenu)typeMenu.hidden=series.value!=='Iris'||subcategory!=='Retrofit Downlight';for(const button of subButtons)button.setAttribute('aria-pressed',String(button.dataset.subcategory===subcategory));for(const button of typeButtons)button.setAttribute('aria-pressed',String(button.dataset.type===productType));let count=0;for(const card of cards){const match=card.dataset.search.includes(search.value.trim().toLowerCase())&&(!series.value||card.dataset.series===series.value)&&(!subcategory||card.dataset.subcategory===subcategory)&&(!productType||card.dataset.type===productType);card.hidden=!match;if(match)count++;}document.querySelector('#count').textContent=`${count} produk`;document.querySelector('#empty').hidden=count!==0;};
+ for(const button of subButtons)button.addEventListener('click',()=>{subcategory=button.dataset.subcategory;productType='';filter();});
+ for(const button of typeButtons)button.addEventListener('click',()=>{productType=button.dataset.type;filter();});
+ search.addEventListener('input',filter);series.addEventListener('change',()=>{subcategory='';productType='';filter();});
 }
 
