@@ -1,7 +1,17 @@
 # Kastor Product Information
 
 Public website: https://kastor-product.pages.dev
-Demo catalog: https://kastor-product.pages.dev/demo
+QR collection: https://kastor-product.pages.dev/qr/
+
+## Current storefront
+
+`scripts/storefront.cjs` is the active builder. It generates Home with search/series filters, a separate public QR collection, and 11 isolated customer detail pages. Customer HTML, image filenames and new QR URLs omit internal product IDs. The QR collection is not linked from customer pages, but is PUBLIC, not authenticated. This repository is also public; do not store confidential data here.
+
+The fixed descriptive slugs in the builder must be preserved after labels are printed. Old `/demo/p/KST-DEMO-xxxx` URLs redirect to their new product pages. `/demo/` redirects to Home. Old QR files and raw demo JSON are not copied to the new deployment. Historical deployments/repository history are not erased by this update.
+
+QR PNGs use high error correction, a four-module quiet zone and a small official logo. `npm test` decodes every QR at native and 300px sizes; physically test a printed label before a production print run. New printable files and ZIP are generated in `dist/qr/`.
+
+`source/site.css` and `source/site.js` implement the current design and interactions. `data/site.json` configures the owner-provided contact number and greeting. The Contact Us dialog displays the greeting and service choices; WhatsApp links prefill a customer inquiry, do not send messages, and do not configure automatic WhatsApp Business replies.
 
 ## Build
 
@@ -14,8 +24,8 @@ Requires Node.js 22+. Run npm ci, npm run build, then npm test. Output: dist/.
 - assets/demo: AI-generated product illustrations, not official product photographs.
 - assets/iris-product.jpg: user-provided original Iris image.
 - assets/brand: logo artwork extracted from the supplied Kastor GSM, Sora font, and brand stylesheet. The complete GSM PDF is not included.
-- scripts/build-demo.cjs: catalog and shared demo page template.
-- assets/qr: QR images whose destinations must remain valid.
+- scripts/build-demo.cjs and scripts/build.cjs: legacy builders, no longer used by npm build.
+- assets/qr: legacy QR images (not published); their destination routes are redirected.
 
 Brand colors: #573d3e, #bbab8a, #7f392e. Typography: Sora Medium and Bold.
 

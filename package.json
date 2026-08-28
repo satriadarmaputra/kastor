@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.cjs",
+    "build": "node scripts/storefront.cjs",
     "test": "node scripts/check.cjs"
   },
   "dependencies": {
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "fflate": "^0.8.3",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4"
   }
 }
