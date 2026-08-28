@@ -1,0 +1,38 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const {createRequire} = require('node:module');
+const root = path.resolve(__dirname, '..');
+const req = createRequire(path.join(root, 'package.json'));
+const ts = req('typescript');
+const React = req('react');
+const {renderToStaticMarkup} = req('react-dom/server');
+const source = fs.readFileSync(path.join(root,'source/products.tsx'),'utf8');
+const compiled = ts.transpileModule(source,{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,module:ts.ModuleKind.CommonJS}}).outputText;
+const mod={exports:{}};
+new Function('require','module','exports',compiled)(req,mod,mod.exports);
+const {products,ProductSheet}=mod.exports;
+const output=path.resolve(__dirname,'../dist');
+fs.mkdirSync(output,{recursive:true});
+fs.writeFileSync(path.join(output,'styles.css'),fs.readFileSync(path.join(root,'source/globals.css'),'utf8').replace("@import 'tailwindcss';",''));
+fs.copyFileSync(path.join(root,'source/favicon.ico'),path.join(output,'favicon.ico'));
+fs.mkdirSync(path.join(output,'images'),{recursive:true});
+fs.copyFileSync(path.join(__dirname,'../assets/iris-product.jpg'),path.join(output,'images/iris-product.jpg'));
+fs.appendFileSync(path.join(output,'styles.css'),'\n.product-photo{margin:0 0 32px;background:#e7e4dc;border-radius:8px;overflow:hidden}.product-photo img{display:block;width:100%;height:auto;max-height:620px;object-fit:contain}@media(max-width:600px){.product-photo{margin-bottom:24px}.product-photo img{max-height:none}}\n');
+const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+for(const p of products){
+ const title=escape(p.name+' | Informasi Produk');
+ const desc=escape(`${p.series}. ${p.type}. Product Size ${p.size}. Cutout ${p.cutout}.`);
+ const markup=renderToStaticMarkup(React.createElement(ProductSheet,{product:p})).replace('<section class="specifications"',`<figure class="product-photo"><img src="/images/iris-product.jpg" alt="${escape(p.name)} — foto produk" width="3024" height="4032" fetchpriority="high"></figure><section class="specifications"`);
+ const imageMeta='<meta property="og:image" content="https://kastor-product.pages.dev/images/iris-product.jpg"><meta name="twitter:image" content="https://kastor-product.pages.dev/images/iris-product.jpg">';
+ const html=`<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title><meta name="description" content="${desc}"><meta property="og:title" content="${title}"><meta property="og:description" content="${desc}">${imageMeta}<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${title}"><meta name="twitter:description" content="${desc}"><link rel="stylesheet" href="/styles.css"><link rel="icon" href="/favicon.ico"></head><body>${markup}</body></html>`;
+ if(!html.includes('<figure class="product-photo">'))throw Error('Product photo missing');
+ const folder=path.join(output,'p',p.slug);
+ fs.mkdirSync(folder,{recursive:true});fs.writeFileSync(path.join(folder,'index.html'),html);
+ if(p===products[0])fs.writeFileSync(path.join(output,'index.html'),html);
+ for(const v of [p.name,p.type,p.size,p.cutout,p.trim,p.reflector])if(!html.includes(escape(v)))throw Error('Missing specification: '+v);
+}
+fs.writeFileSync(path.join(output,'404.html'),'<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Produk tidak ditemukan</title><link rel="stylesheet" href="/styles.css"></head><body><main><h1>Produk tidak ditemukan</h1><p>Periksa kembali QR atau tautan produk Anda.</p><a href="/">Kembali ke beranda</a></main></body></html>');
+fs.writeFileSync(path.join(output,'_headers'),'/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n');
+console.log(`Validated static export: ${products.length} product(s). Output: ${output}`);
+require('./build-demo.cjs');
+require('./apply-brand.cjs');
