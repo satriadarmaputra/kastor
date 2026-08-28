@@ -35,7 +35,9 @@ const vm=require('node:vm');const nodes={};
 for(const id of ['search','series','count','empty','contact-open','contact-close','contact-dialog'])nodes['#'+id]={value:'',handlers:{},addEventListener(type,cb){this.handlers[type]=cb;},showModal(){this.open=true;},close(){this.open=false;}};
 nodes['#dimmer']={value:'70',handlers:{},addEventListener(type,cb){this.handlers[type]=cb;},setAttribute(name,value){this[name]=value;}};
 nodes['#dimmer-value']={};nodes['.hero']={style:{setProperty(name,value){this[name]=value;}}};
-const cards=products.map(p=>({dataset:{search:(p.name+' '+p.specs.Type).toLowerCase(),series:p.series},hidden:false}));
+const subButtons=['','Retrofit Downlight'].map(value=>({dataset:{subcategory:value},handlers:{},setAttribute(name,value){this[name]=value;},addEventListener(type,cb){this.handlers[type]=cb;}}));
+nodes['#subcategory-menu']={hidden:true,querySelectorAll:()=>subButtons};
+const cards=products.map(p=>({dataset:{search:(p.name+' '+p.specs.Type).toLowerCase(),series:p.series,subcategory:p.subcategory||''},hidden:false}));
 vm.runInNewContext(fs.readFileSync(path.join(root,'site.js'),'utf8'),{document:{documentElement:nodes['.hero'],querySelector:s=>nodes[s],querySelectorAll:()=>cards}});
 for(const value of ['0','70','100']){nodes['#dimmer'].value=value;nodes['#dimmer'].handlers.input();assert.equal(nodes['.hero'].style['--light-level'],String(Number(value)/100));assert.equal(nodes['#dimmer-value'].textContent,value+'%');}
 assert.equal(nodes['.hero'].style['--ambient-bg'],'rgb(248, 246, 242)');
@@ -43,6 +45,8 @@ nodes['#dimmer'].value='0';nodes['#dimmer'].handlers.input();assert.equal(nodes[
 nodes['#search'].value='magnetic';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.ok(nodes['#empty'].hidden===false);
 nodes['#search'].value='';nodes['#series'].value='';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,products.length);
+nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.equal(nodes['#subcategory-menu'].hidden,false);subButtons[1].handlers.click();assert.equal(cards.filter(c=>!c.hidden).length,1);assert.equal(subButtons[1]['aria-pressed'],'true');
+nodes['#series'].value='Terra';nodes['#series'].handlers.change();assert.equal(nodes['#subcategory-menu'].hidden,true);assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#contact-open'].handlers.click();assert.equal(nodes['#contact-dialog'].open,true);nodes['#contact-close'].handlers.click();assert.equal(nodes['#contact-dialog'].open,false);
 console.log('Passed: all pages, customer privacy checks, QR decoding, ZIP, redirects, filters and contact handlers.');
 
