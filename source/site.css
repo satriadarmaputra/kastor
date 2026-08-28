@@ -25,3 +25,17 @@ html:has(#dimmer) :is(input,select)::placeholder{color:var(--ambient-muted,#7864
  html:has(#dimmer) .photo img{transition:filter .45s ease-out,transform .35s ease-out}
 }
 
+/* Editorial Home and lightweight interactions. */
+html:has(#collection) .hero{border-radius:4px 4px 100px 4px;min-height:620px;margin-bottom:75px}
+html:has(#collection) .hero h1{max-width:750px;font-size:clamp(48px,7vw,88px);letter-spacing:-3px}
+html:has(#collection) .light-scene{right:50px;transform:scale(1.1);transform-origin:top center}
+.featured-story{display:grid;grid-template-columns:1.1fr 1fr;gap:65px;align-items:center;margin:0 0 100px}
+.featured-photo{height:480px;overflow:hidden;border-radius:180px 180px 4px 4px;background:#bbab8a}
+.featured-photo img{width:100%;height:100%;object-fit:cover;filter:brightness(var(--ambient-photo,1));transition:filter .45s ease-out}
+.featured-copy h2{font-size:clamp(32px,4vw,54px);line-height:1.15;letter-spacing:-1.7px;margin:22px 0}.featured-copy>p:not(.eyebrow){font-size:13px;max-width:390px;line-height:1.9;margin-bottom:28px}
+#collection{scroll-margin-top:25px}.section-top h2{font-size:clamp(30px,4vw,44px);letter-spacing:-1px;margin:10px 0}
+.series-chips{display:flex;gap:9px;overflow-x:auto;padding:12px 2px 18px;scrollbar-width:thin}.series-chips button{flex-shrink:0;border:1px solid var(--ambient-line,#ded7cc);border-radius:30px;background:transparent;color:inherit;padding:12px 20px;font-size:11px;cursor:pointer;min-height:44px;transition:background-color .2s,color .2s}.series-chips button[aria-pressed=true]{background:#573d3e;color:#fff;border-color:#573d3e}.series-chips button:hover{border-color:#573d3e}
+html:has(#collection) .grid{gap:35px 26px;align-items:start}html:has(#collection) .card{border:1px solid var(--ambient-line,#ded7cc);padding:14px;border-radius:10px;background:var(--ambient-panel,#fff);transition:box-shadow .25s,background-color .45s ease-out,border-color .45s ease-out}html:has(#collection) .photo{border-radius:5px}html:has(#collection) .card:hover{box-shadow:0 15px 30px #573d3e15}html:has(#collection) .card h2{min-height:55px}html:has(#collection) .card-qr{border-top:1px solid var(--ambient-line,#ded7cc);padding-top:15px}html:has(#collection) .card-qr .button{border-radius:4px;width:100%;text-align:center}
+.light-dock{position:fixed;bottom:22px;left:22px;width:215px;z-index:5;background:#302324f5;color:#f8f6f2;border:1px solid #bbab8a;border-radius:14px;padding:13px 18px;box-shadow:0 8px 28px #0002}.light-dock label{display:flex;justify-content:space-between;font-size:11px}.light-dock input{min-height:32px;margin-bottom:0}.light-dock :focus-visible{outline-color:#ffe1a6}.reset-filter{display:block;margin-top:12px;border:1px solid currentColor;background:transparent;color:inherit;padding:12px;font:inherit;cursor:pointer}
+@media(max-width:850px){html:has(#collection) .light-scene{right:-100px}.featured-story{gap:30px}.featured-photo{height:380px}}
+@media(max-width:600px){html:has(#collection) .hero{min-height:auto;border-bottom-right-radius:55px;margin-bottom:45px}html:has(#collection) .hero h1{font-size:48px;letter-spacing:-2px}.featured-story{grid-template-columns:1fr;margin-bottom:55px}.featured-photo{height:350px;border-radius:130px 130px 4px 4px}.featured-copy h2{font-size:38px}.light-dock{bottom:14px;left:12px;width:160px;padding:10px 12px}.light-dock label{font-size:10px}.contact{padding:13px 16px;right:12px;bottom:14px}.series-chips button{padding:10px 16px}html:has(#collection) .card h2{min-height:0}}

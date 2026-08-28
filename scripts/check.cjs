@@ -6,12 +6,15 @@ let pages=0;
 function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(p.endsWith('.html')){pages++;const s=fs.readFileSync(p,'utf8');for(const m of s.matchAll(/(?:href|src)="(\/[^"#]*)"/g)){assert.ok(fs.existsSync(path.join(root,m[1])),m[1]);}assert.ok(s.includes('/site.css'));}}}
 walk(root);assert.equal(pages,14);
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
+assert.ok(home.includes('/experience.js'));
+new (require('node:vm').Script)(fs.readFileSync(path.join(root,'experience.js'),'utf8'));
 assert.equal((home.match(/<details>/g)||[]).length,products.length);
 for(const p of products){assert.ok(home.includes(`download="${p.slug}.png"`));assert.ok(home.includes(`alt="QR ${p.name}"`));}
 for(const p of products){
  const html=fs.readFileSync(path.join(root,route(p),'index.html'),'utf8');
  assert.ok(!/KST-DEMO-|Product ID|SKU|qr\/|data-product|href="\/"/.test(html),'Customer page must not contain internal IDs, QR links or catalogue navigation');
  assert.ok(html.includes(p.name));assert.ok(html.includes('contact-dialog'));
+ assert.ok(!html.includes('/experience.js'),'Home enhancements must not load on scan pages');
  if(p.demo)assert.ok(html.includes('DATA DUMMY'));
  const png=PNG.sync.read(fs.readFileSync(path.join(root,'qr/files',p.slug+'.png')));
  for(const size of [png.width,300]){
