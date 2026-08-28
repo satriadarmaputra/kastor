@@ -10,14 +10,7 @@ if(collection){
  const animateResults=()=>{if(!reduced.matches)document.querySelectorAll('.card:not([hidden])').forEach((card,i)=>{card.getAnimations().forEach(animation=>animation.cancel());card.animate([{opacity:.45,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:280,delay:Math.min(i*20,100),easing:'ease-out'});});};
  select.addEventListener('change',animateResults);document.querySelector('#search').addEventListener('input',animateResults);
  const reset=document.createElement('button');reset.className='reset-filter';reset.type='button';reset.textContent='Reset pencarian ↺';reset.addEventListener('click',()=>{document.querySelector('#search').value='';select.value='';select.dispatchEvent(new Event('change'));});document.querySelector('#empty').append(reset);
- const original=document.querySelector('#dimmer');
- const dock=document.createElement('aside');dock.className='light-dock';dock.setAttribute('aria-label','Kontrol cahaya halaman');dock.hidden=true;
- dock.innerHTML='<label for="dock-dimmer">☀ Cahaya <output id="dock-value" for="dock-dimmer">70%</output></label><input id="dock-dimmer" type="range" min="0" max="100" value="70" aria-label="Cahaya halaman">';document.body.append(dock);
- const mirror=dock.querySelector('input'),value=dock.querySelector('output');
- const sync=()=>{mirror.value=original.value;value.textContent=original.value+'%';};
- original.addEventListener('input',sync);mirror.addEventListener('input',()=>{original.value=mirror.value;original.dispatchEvent(new Event('input'));});sync();
  if('IntersectionObserver' in window){
-  const dockObserver=new IntersectionObserver(entries=>{dock.hidden=entries[0].isIntersecting;},{threshold:0});dockObserver.observe(document.querySelector('.hero'));
   const reveal=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){if(!reduced.matches)entry.target.animate([{opacity:.3,transform:'translateY(22px)'},{opacity:1,transform:'translateY(0)'}],{duration:550,easing:'cubic-bezier(.2,.7,.2,1)'});reveal.unobserve(entry.target);}}},{threshold:.08});
   document.querySelectorAll('.card,.featured-story').forEach(el=>reveal.observe(el));
  }

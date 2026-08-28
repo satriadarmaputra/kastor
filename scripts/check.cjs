@@ -7,6 +7,9 @@ function walk(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=
 walk(root);assert.equal(pages,14);
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
 assert.ok(home.includes('/experience.js'));
+assert.equal((home.match(/id="dimmer"/g)||[]).length,1);
+assert.ok(home.includes('<aside class="light-dock"'));
+assert.ok(!home.split('<section class="hero">')[1].split('</section>')[0].includes('id="dimmer"'));
 new (require('node:vm').Script)(fs.readFileSync(path.join(root,'experience.js'),'utf8'));
 assert.equal((home.match(/<details>/g)||[]).length,products.length);
 for(const p of products){assert.ok(home.includes(`download="${p.slug}.png"`));assert.ok(home.includes(`alt="QR ${p.name}"`));}
