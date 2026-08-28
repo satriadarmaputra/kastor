@@ -30,10 +30,13 @@ for(const id of ['search','series','count','empty','contact-open','contact-close
 nodes['#dimmer']={value:'70',handlers:{},addEventListener(type,cb){this.handlers[type]=cb;},setAttribute(name,value){this[name]=value;}};
 nodes['#dimmer-value']={};nodes['.hero']={style:{setProperty(name,value){this[name]=value;}}};
 const cards=products.map(p=>({dataset:{search:(p.name+' '+p.specs.Type).toLowerCase(),series:p.series},hidden:false}));
-vm.runInNewContext(fs.readFileSync(path.join(root,'site.js'),'utf8'),{document:{querySelector:s=>nodes[s],querySelectorAll:()=>cards}});
+vm.runInNewContext(fs.readFileSync(path.join(root,'site.js'),'utf8'),{document:{documentElement:nodes['.hero'],querySelector:s=>nodes[s],querySelectorAll:()=>cards}});
 for(const value of ['0','70','100']){nodes['#dimmer'].value=value;nodes['#dimmer'].handlers.input();assert.equal(nodes['.hero'].style['--light-level'],String(Number(value)/100));assert.equal(nodes['#dimmer-value'].textContent,value+'%');}
+assert.equal(nodes['.hero'].style['--ambient-bg'],'rgb(248, 246, 242)');
+nodes['#dimmer'].value='0';nodes['#dimmer'].handlers.input();assert.equal(nodes['.hero'].style['--ambient-bg'],'rgb(166, 148, 128)');assert.equal(nodes['.hero'].style['--ambient-photo'],'0.65');
 nodes['#search'].value='magnetic';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,2);
 nodes['#series'].value='Iris';nodes['#series'].handlers.change();assert.ok(nodes['#empty'].hidden===false);
 nodes['#search'].value='';nodes['#series'].value='';nodes['#search'].handlers.input();assert.equal(cards.filter(c=>!c.hidden).length,11);
 nodes['#contact-open'].handlers.click();assert.equal(nodes['#contact-dialog'].open,true);nodes['#contact-close'].handlers.click();assert.equal(nodes['#contact-dialog'].open,false);
 console.log('Passed: 14 pages, customer privacy checks, 22 QR decode checks, ZIP, redirects, filters and contact handlers.');
+

@@ -5,3 +5,22 @@ dialog{border:1px solid #ded7cc;background:#f8f6f2;color:var(--ink);width:min(54
 .hero{--light-level:.7}.hero-circle{opacity:var(--light-level)}.light-scene{position:absolute;right:30px;top:0;width:340px;height:100%;pointer-events:none}.pendant-cord{position:absolute;left:50%;top:0;height:90px;width:2px;background:#d5c7ac}.pendant-shade{position:absolute;left:calc(50% - 60px);top:88px;width:120px;height:55px;background:linear-gradient(110deg,#211a1a,#9b7c6b,#332525);clip-path:polygon(25% 0,75% 0,100% 100%,0 100%);z-index:1}.light-beam{position:absolute;top:141px;left:0;width:340px;height:330px;background:linear-gradient(#ffdf9b80,#ffe5aa08);clip-path:polygon(32% 0,68% 0,100% 100%,0 100%);opacity:var(--light-level)}.light-pool{position:absolute;top:435px;left:0;width:340px;height:80px;border-radius:50%;background:radial-gradient(ellipse,#ffe5aa99,transparent 70%);filter:blur(10px);opacity:var(--light-level)}.dimmer{position:relative;z-index:2;margin-top:30px;padding:18px 20px;max-width:320px;background:#302324;border:1px solid #bbab8a80;color:#f8f6f2}.dimmer-heading,.dimmer-labels{display:flex;justify-content:space-between;gap:15px;font-size:12px}.dimmer-labels{font-size:10px;color:#e0d3bb}.dimmer small{display:block;margin-top:12px;font-size:9px;color:#e0d3bb}input[type=range]{accent-color:#d5b37e;cursor:pointer;background:transparent;border:0;padding:0;min-height:44px;margin:4px 0;width:100%}.dimmer :focus-visible{outline-color:#ffe1a6}.hero>.eyebrow{position:relative;z-index:1}@media(max-width:850px){.light-scene{right:-100px;opacity:.6}.hero h1,.hero>p{max-width:90%}}@media(max-width:520px){.light-scene{right:-165px;opacity:.4}.dimmer{max-width:100%}}
 .card>a{display:block}.card-qr{margin-top:20px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}.card-qr details{width:100%;border:1px solid #ded7cc;background:white}.card-qr summary{cursor:pointer;padding:14px;font-size:12px;min-height:44px}.card-qr details img{display:block;width:100%;max-width:300px;height:auto;margin:0 auto}.card-qr details p{padding:0 14px 10px;margin:0}.card-qr .button{font-size:11px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail{grid-template-columns:1fr;gap:30px}.detail figure{position:static}.product-image{max-height:550px}}@media(max-width:520px){header{padding:22px}header img{width:135px}header .small{font-size:8px;max-width:100px;text-align:right}main{padding:22px 22px 65px}.hero{padding:32px 24px;margin-bottom:36px}.hero h1{font-size:46px}.grid{grid-template-columns:1fr}.filters{flex-direction:column}.filters label:last-child{max-width:none}.section-top{align-items:start;flex-direction:column;gap:0}.detail h1{font-size:32px}footer{padding:25px 22px 95px;gap:20px;font-size:9px}.contact{right:16px;bottom:16px}.qr-card{max-width:400px;width:100%;justify-self:center}}
+/* Ambient lighting affects the full Home page; QR pixels remain untouched. */
+:root{--light-level:.7}
+.hero{--light-level:inherit}
+html:has(#dimmer),html:has(#dimmer) body{background:var(--ambient-bg,#f8f6f2);color:var(--ambient-text,#573d3e)}
+html:has(#dimmer) :is(header,.card){border-color:var(--ambient-line,#ded7cc)}
+html:has(#dimmer) :is(.hero,footer){background:var(--ambient-hero,#573d3e)}
+html:has(#dimmer) :is(.notice,input:not([type=range]),select){background:var(--ambient-panel,#fff);color:var(--ambient-text,#573d3e);border-color:var(--ambient-line,#ded7cc)}
+html:has(#dimmer) .card .eyebrow{color:var(--ambient-accent,#7f392e)}
+html:has(#dimmer) .card>a>.small{color:var(--ambient-muted,#786464)}
+html:has(#dimmer) .photo img{filter:brightness(var(--ambient-photo,1))}
+html:has(#dimmer) .card-qr details{color:#573d3e;background:#fff}
+html:has(#dimmer) .card-qr details img{filter:none;opacity:1}
+html:has(#dimmer) header img{background:white;padding:7px}
+html:has(#dimmer) :is(input,select)::placeholder{color:var(--ambient-muted,#786464)}
+@media(prefers-reduced-motion:no-preference){
+ html:has(#dimmer),html:has(#dimmer) :is(body,header,footer,.hero,.notice,.card,input,select){transition:background-color .45s ease-out,color .45s ease-out,border-color .45s ease-out}
+ .hero-circle,.light-beam,.light-pool{transition:opacity .45s ease-out}
+ html:has(#dimmer) .photo img{transition:filter .45s ease-out,transform .35s ease-out}
+}
