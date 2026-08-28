@@ -17,10 +17,11 @@ html:has(#dimmer) .card>a>.small{color:var(--ambient-muted,#786464)}
 html:has(#dimmer) .photo img{filter:brightness(var(--ambient-photo,1))}
 html:has(#dimmer) .card-qr details{color:#573d3e;background:#fff}
 html:has(#dimmer) .card-qr details img{filter:none;opacity:1}
-html:has(#dimmer) header img{background:white;padding:7px}
+html:has(#dimmer) header img{background:transparent;padding:0}
 html:has(#dimmer) :is(input,select)::placeholder{color:var(--ambient-muted,#786464)}
 @media(prefers-reduced-motion:no-preference){
  html:has(#dimmer),html:has(#dimmer) :is(body,header,footer,.hero,.notice,.card,input,select){transition:background-color .45s ease-out,color .45s ease-out,border-color .45s ease-out}
  .hero-circle,.light-beam,.light-pool{transition:opacity .45s ease-out}
  html:has(#dimmer) .photo img{transition:filter .45s ease-out,transform .35s ease-out}
 }
+
