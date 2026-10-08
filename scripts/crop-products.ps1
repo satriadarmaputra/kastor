@@ -1,17 +1,41 @@
 Add-Type -AssemblyName System.Drawing.Common -ErrorAction Stop
 $root = Split-Path -Parent $PSScriptRoot
 $out = Join-Path $root 'assets/products'
+$heroOut = Join-Path $root 'assets/heroes'
 New-Item -ItemType Directory -Force $out | Out-Null
+New-Item -ItemType Directory -Force $heroOut | Out-Null
 function Crop($source,$slug,$x,$y,$w,$h) {
   $src=[System.Drawing.Bitmap]::FromFile((Join-Path $root "assets/catalog/$source"))
   try {
     $rect=[System.Drawing.Rectangle]::new($x,$y,$w,$h)
-    $dst=[System.Drawing.Bitmap]::new($w,$h)
+    $dst=[System.Drawing.Bitmap]::new(1200,1200)
     $g=[System.Drawing.Graphics]::FromImage($dst)
-    try { $g.Clear([System.Drawing.Color]::White); $g.DrawImage($src,[System.Drawing.Rectangle]::new(0,0,$w,$h),$rect,[System.Drawing.GraphicsUnit]::Pixel) } finally { $g.Dispose() }
+    try {
+      $g.Clear([System.Drawing.Color]::White)
+      $g.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+      $g.SmoothingMode=[System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+      $scale=[Math]::Min(1080/$w,1080/$h); $dw=[int]($w*$scale); $dh=[int]($h*$scale); $dx=[int]((1200-$dw)/2); $dy=[int]((1200-$dh)/2)
+      $g.DrawImage($src,[System.Drawing.Rectangle]::new($dx,$dy,$dw,$dh),$rect,[System.Drawing.GraphicsUnit]::Pixel)
+    } finally { $g.Dispose() }
     try { $dst.Save((Join-Path $out "$slug.jpg"),[System.Drawing.Imaging.ImageFormat]::Jpeg) } finally { $dst.Dispose() }
   } finally { $src.Dispose() }
 }
+function Hero($source,$slug,$x,$y,$w,$h) {
+  $src=[System.Drawing.Bitmap]::FromFile((Join-Path $root "assets/catalog/$source")); try {
+    $dst=[System.Drawing.Bitmap]::new(1920,1080); $g=[System.Drawing.Graphics]::FromImage($dst); try {
+      $g.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+      $g.SmoothingMode=[System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+      $g.DrawImage($src,[System.Drawing.Rectangle]::new(0,0,1920,1080),[System.Drawing.Rectangle]::new($x,$y,$w,$h),[System.Drawing.GraphicsUnit]::Pixel)
+    } finally {$g.Dispose()}; try {$dst.Save((Join-Path $heroOut "$slug-hero.jpg"),[System.Drawing.Imaging.ImageFormat]::Jpeg)} finally {$dst.Dispose()}
+  } finally {$src.Dispose()}
+}
+
+# Clean central crops: exclude all printed series titles and descriptions embedded at both edges.
+Hero iris-cover.jpg iris 1300 500 2000 1125
+Hero linea-cover.jpg linea 1450 500 1850 1041
+Hero loop-cover.jpg loop 1300 500 2000 1125
+Hero snap-cover.jpg snap 1300 500 2000 1125
+Hero pipo-cover.jpg pipo 1300 500 2000 1125
 
 Crop iris-spec.jpg iris-basic-recessed-downlight 150 930 360 430
 Crop iris-spec.jpg iris-adjustable-recessed-downlight 150 1900 360 430
@@ -57,4 +81,12 @@ Crop loop-xl-spec.jpg loop-xl-general-downlight 220 800 300 520
 Crop loop-xl-spec.jpg loop-xl-pinhole 220 1660 300 520
 Crop loop-xl-spec.jpg loop-xl-slotted-pinhole 220 2500 300 520
 Crop loop-xl-spec.jpg loop-recessed-vanity-downlight 2600 970 350 520
-Write-Output "Created $((Get-ChildItem $out -Filter *.jpg).Count) product crops."
+# Pipo cover artwork is mostly typography. Replace it with a clean, text-free product composition.
+$hero=[System.Drawing.Bitmap]::new(1920,1080); $hg=[System.Drawing.Graphics]::FromImage($hero); try {
+  $hg.Clear([System.Drawing.Color]::FromArgb(61,56,54)); $hg.SmoothingMode=[System.Drawing.Drawing2D.SmoothingMode]::HighQuality; $hg.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+  $s=[System.Drawing.Image]::FromFile((Join-Path $out 'pipo-downlight-pulldown-s.jpg')); $m=[System.Drawing.Image]::FromFile((Join-Path $out 'pipo-downlight-pulldown-m.jpg')); try {
+    $hg.FillRectangle([System.Drawing.Brushes]::White,210,130,680,820); $hg.FillRectangle([System.Drawing.Brushes]::White,1030,130,680,820)
+    $hg.DrawImage($s,250,200,600,600); $hg.DrawImage($m,1070,200,600,600)
+  } finally {$s.Dispose();$m.Dispose()}
+} finally {$hg.Dispose()}; try {$hero.Save((Join-Path $heroOut 'pipo-hero.jpg'),[System.Drawing.Imaging.ImageFormat]::Jpeg)} finally {$hero.Dispose()}
+Write-Output "Created $((Get-ChildItem $out -Filter *.jpg).Count) HD product crops and 5 clean heroes."

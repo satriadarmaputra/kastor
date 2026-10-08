@@ -1,9 +1,9 @@
 const series = [
-  { slug: 'iris', name: 'Iris Series', cover: 'iris-cover.jpg', sheet: 'iris-spec.jpg', description: 'Recessed downlight dengan cahaya nyaman, sumber cahaya tersembunyi, serta pilihan standard, pinhole, slotted, dan glasses.' },
-  { slug: 'linea', name: 'Linea Series', cover: 'linea-cover.jpg', sheet: 'linea-spec.jpg', description: 'Linear spotlight untuk garis cahaya yang rapi dan seamless, tersedia dalam versi recessed dan surface.' },
-  { slug: 'loop', name: 'Loop Series', cover: 'loop-cover.jpg', sheet: 'loop-spec.jpg', description: 'Koleksi downlight berperforma tinggi dengan ukuran dan karakter sorot yang lengkap.' },
-  { slug: 'pipo', name: 'Pipo Series', cover: 'pipo-cover.jpg', sheet: 'pipo-spec.jpg', description: 'Pulldown ceiling spotlight yang dapat tampil rata atau diarahkan untuk menonjolkan objek dan detail arsitektur.' },
-  { slug: 'snap', name: 'Snap Series', cover: 'snap-cover.jpg', sheet: 'snap-spec.jpg', description: 'Sistem magnetic track modular yang mudah dipasang, dilepas, dan diatur ulang sesuai kebutuhan ruang.' }
+  { slug: 'iris', name: 'Iris Series', cover: 'iris-hero.jpg', sheet: 'iris-spec.jpg', description: 'Recessed downlight dengan cahaya nyaman, sumber cahaya tersembunyi, serta pilihan standard, pinhole, slotted, dan glasses.' },
+  { slug: 'linea', name: 'Linea Series', cover: 'linea-hero.jpg', sheet: 'linea-spec.jpg', description: 'Linear spotlight untuk garis cahaya yang rapi dan seamless, tersedia dalam versi recessed dan surface.' },
+  { slug: 'loop', name: 'Loop Series', cover: 'loop-hero.jpg', sheet: 'loop-spec.jpg', description: 'Koleksi downlight berperforma tinggi dengan ukuran dan karakter sorot yang lengkap.' },
+  { slug: 'pipo', name: 'Pipo Series', cover: 'pipo-hero.jpg', sheet: 'pipo-spec.jpg', description: 'Pulldown ceiling spotlight yang dapat tampil rata atau diarahkan untuk menonjolkan objek dan detail arsitektur.' },
+  { slug: 'snap', name: 'Snap Series', cover: 'snap-hero.jpg', sheet: 'snap-spec.jpg', description: 'Sistem magnetic track modular yang mudah dipasang, dilepas, dan diatur ulang sesuai kebutuhan ruang.' }
 ];
 
 const products = [];
