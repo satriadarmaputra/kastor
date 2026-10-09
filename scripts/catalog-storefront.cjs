@@ -35,7 +35,7 @@ async function build() {
   for (const name of ['kastor-logo.png','kastor-logo-transparent.png','sora-medium.ttf','sora-bold.ttf']) write('brand/'+name,fs.readFileSync(path.join(root,'assets/brand',name)));
   for (const name of fs.readdirSync(path.join(root,'assets/catalog'))) write('catalog/'+name,fs.readFileSync(path.join(root,'assets/catalog',name)));
   for (const name of fs.readdirSync(path.join(root,'assets/heroes'))) write('heroes/'+name,fs.readFileSync(path.join(root,'assets/heroes',name)));
-  for (const name of fs.readdirSync(path.join(root,'assets/products'))) write('products/'+name,fs.readFileSync(path.join(root,'assets/products',name)));
+  for (const name of fs.readdirSync(path.join(root,'assets/products-hd'))) write('products/'+name,fs.readFileSync(path.join(root,'assets/products-hd',name)));
   write('site.css',fs.readFileSync(path.join(root,'source/site.css'))); write('site.js',fs.readFileSync(path.join(root,'source/site.js'))); write('favicon.ico',fs.readFileSync(path.join(root,'source/favicon.ico')));
   const archive={};
   for (const product of products) {

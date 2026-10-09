@@ -1,30 +1,42 @@
 Add-Type -AssemblyName System.Drawing.Common -ErrorAction Stop
 $root = Split-Path -Parent $PSScriptRoot
-$out = Join-Path $root 'assets/products'
+$out = Join-Path $root 'assets/products-hd'
 $heroOut = Join-Path $root 'assets/heroes'
 New-Item -ItemType Directory -Force $out | Out-Null
 New-Item -ItemType Directory -Force $heroOut | Out-Null
 function SaveJpeg($bitmap,$path) {
-  $codec=[System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders()|Where-Object MimeType -eq 'image/jpeg'; $params=[System.Drawing.Imaging.EncoderParameters]::new(1); $params.Param[0]=[System.Drawing.Imaging.EncoderParameter]::new([System.Drawing.Imaging.Encoder]::Quality,[long]92)
-  try {$bitmap.Save($path,$codec,$params)} finally {$params.Dispose()}
+  $codec=[System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders()|Where-Object MimeType -eq 'image/jpeg'; $params=[System.Drawing.Imaging.EncoderParameters]::new(1); $params.Param[0]=[System.Drawing.Imaging.EncoderParameter]::new([System.Drawing.Imaging.Encoder]::Quality,[long]96)
+  $temp="$path.next.jpg"
+  try {
+    $bitmap.Save($temp,$codec,$params)
+    $saved=$false
+    for($attempt=1;$attempt -le 8 -and -not $saved;$attempt++){
+      try {[System.IO.File]::Copy($temp,$path,$true);$saved=$true} catch {if($attempt -eq 8){throw};Start-Sleep -Milliseconds 200}
+    }
+  } finally {$params.Dispose(); if(Test-Path -LiteralPath $temp){Remove-Item -LiteralPath $temp -Force}}
 }
 function Crop($source,$slug,$x,$y,$w,$h,$cleanTop=0) {
   $src=[System.Drawing.Bitmap]::FromFile((Join-Path $root "assets/catalog/$source"))
   try {
     $rect=[System.Drawing.Rectangle]::new($x,$y,$w,$h)
-    $dst=[System.Drawing.Bitmap]::new(1200,1200)
+    # Extraction -> safe crop -> HD upscaling. Keep 10% clear space on every side
+    # so springs, clips and track ends never touch the web image boundary.
+    $canvas=1600; $productMax=1280
+    $dst=[System.Drawing.Bitmap]::new($canvas,$canvas)
     $g=[System.Drawing.Graphics]::FromImage($dst)
     try {
       $g.Clear([System.Drawing.Color]::White)
       $g.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
       $g.SmoothingMode=[System.Drawing.Drawing2D.SmoothingMode]::HighQuality
-      $scale=[Math]::Min(1080/$w,1080/$h); $dw=[int]($w*$scale); $dh=[int]($h*$scale); $dx=[int]((1200-$dw)/2); $dy=[int]((1200-$dh)/2)
+      $g.CompositingQuality=[System.Drawing.Drawing2D.CompositingQuality]::HighQuality
+      $g.PixelOffsetMode=[System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+      $scale=[Math]::Min($productMax/$w,$productMax/$h); $dw=[int]($w*$scale); $dh=[int]($h*$scale); $dx=[int](($canvas-$dw)/2); $dy=[int](($canvas-$dh)/2)
       $g.DrawImage($src,[System.Drawing.Rectangle]::new($dx,$dy,$dw,$dh),$rect,[System.Drawing.GraphicsUnit]::Pixel)
-      if($cleanTop -gt 0){$g.FillRectangle([System.Drawing.Brushes]::White,0,0,1200,$cleanTop)}
+      if($cleanTop -gt 0){$g.FillRectangle([System.Drawing.Brushes]::White,0,0,$canvas,[int]($cleanTop*$canvas/1200))}
     } finally { $g.Dispose() }
     # GDI+ can retain the source scanline on the first JPEG row after an edge fill.
     # Force that row to white so no catalogue text fragment survives at the canvas edge.
-    if($cleanTop -gt 0){for($px=0;$px -lt 1200;$px++){$dst.SetPixel($px,0,[System.Drawing.Color]::White)}}
+    if($cleanTop -gt 0){for($px=0;$px -lt $canvas;$px++){$dst.SetPixel($px,0,[System.Drawing.Color]::White)}}
     try { SaveJpeg $dst (Join-Path $out "$slug.jpg") } finally { $dst.Dispose() }
   } finally { $src.Dispose() }
 }
@@ -47,8 +59,10 @@ Hero pipo-cover.jpg pipo 1300 500 2000 1125
 
 Crop iris-spec.jpg iris-basic-recessed-downlight 150 930 360 430
 Crop iris-spec.jpg iris-adjustable-recessed-downlight 150 1900 360 430
-Crop iris-spec.jpg iris-recessed-pinhole-downlight 1270 930 360 430
-Crop iris-spec.jpg iris-recessed-slotted-pinhole-downlight 1270 2050 360 650 240
+Crop iris-spec.jpg iris-recessed-pinhole-downlight 1240 900 450 450
+# The complete slotted unit spans x=1296..1671 in the source; this region keeps
+# both retaining springs intact and avoids the specification table on the right.
+Crop iris-spec.jpg iris-recessed-slotted-pinhole-downlight 1240 2135 450 430
 Crop iris-spec.jpg iris-recessed-glasses-downlight 2580 930 400 430
 
 Crop linea-spec.jpg linea-xs-3-cells 140 1040 350 360
@@ -63,7 +77,7 @@ Crop snap-spec.jpg snap-xs-magnetic-spotlight 150 870 350 400
 Crop snap-spec.jpg snap-xs-magnetic-linear-fixed 1220 900 470 300
 Crop snap-spec.jpg snap-xs-magnetic-linear-adjustable 130 2020 430 320
 Crop snap-spec.jpg snap-xs-magnetic-cylinder 1260 1980 420 430
-Crop snap-spec.jpg snap-m-magnetic-spotlight 2540 870 370 410
+Crop snap-spec.jpg snap-m-magnetic-spotlight 2500 850 500 500
 Crop snap-spec.jpg snap-m-magnetic-linear-fixed 3780 900 400 300
 Crop snap-spec.jpg snap-m-magnetic-linear-adjustable 2520 2020 470 330
 
@@ -77,7 +91,7 @@ Crop snap-accessories.jpg snap-m-rail-track-trim 1320 1070 430 250
 Crop snap-accessories.jpg snap-m-flexible-connector 1290 1370 480 300
 Crop snap-accessories.jpg snap-m-i-connector 1290 1750 480 220
 Crop snap-accessories.jpg snap-m-power-end 1290 2020 480 280
-Crop snap-accessories.jpg snap-m-power-supply 1290 2320 480 220
+Crop snap-accessories.jpg snap-m-power-supply 1290 2370 480 160
 
 Crop loop-spec.jpg loop-xs-general-mini-downlight 270 860 260 560
 foreach($item in @(

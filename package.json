@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "node scripts/catalog-storefront.cjs",
-    "test": "node scripts/catalog-check.cjs"
+    "test": "node scripts/catalog-check.cjs",
+    "audit:images": "pwsh -NoProfile -File scripts/verify-product-images.ps1"
   },
   "dependencies": {
     "react": "19.2.6",
